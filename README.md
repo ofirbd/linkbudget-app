@@ -5,7 +5,7 @@ A modern, responsive, and completely offline-capable web application for perform
 This project is a modernization of a legacy Java Swing desktop application, rewritten entirely into a **single, self-contained HTML file** with zero runtime dependencies. It is designed to run flawlessly on both desktop monitors and mobile devices.
 
 ## 🚀 Live Demo
-**[Insert your GitHub Pages URL here]**
+**[[Link Budget-App]](https://ofirbd.github.io/linkbudget-app/)**
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
