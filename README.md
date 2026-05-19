@@ -5,7 +5,7 @@ A modern, responsive, and completely offline-capable web application for perform
 This project is a modernization of a legacy Java Swing desktop application, rewritten entirely into a **single, self-contained HTML file** with zero runtime dependencies. It is designed to run flawlessly on both desktop monitors and mobile devices.
 
 ## 🚀 Live Demo
-**[[Link Budget-App]](https://ofirbd.github.io/linkbudget-app/)**
+[Link Budget-App](https://ofirbd.github.io/linkbudget-app/)
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
@@ -13,6 +13,8 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
   * Free Space Path Loss (FSPL)
   * Hata Model (Urban environment)
   * Egli Model
+  * Plane-Earth (Ground Bounce) Model
+  * Log-Distance Path Loss Model (with customizable path loss exponent and reference distance)
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders.
 * **Visual Data:** Dynamic charting of signal loss over distance.
 * **Persistent Storage:** Automatically saves your last used radio and antenna parameters across sessions.
@@ -28,4 +30,4 @@ Since this is a single-file application, usage is incredibly simple:
 * **Framework:** React + TypeScript
 * **Styling:** Tailwind CSS (Dark Mode by default)
 * **Charting:** Recharts
-* **Build System:** Vite (compiled via `@vitejs/plugin-legacy` and `vite-plugin-singlefile` to bypass local file security restrictions).
+* **Build System:** Vite (compiled via `vite-plugin-singlefile` to bypass local file security restrictions and generate a 100% standalone artifact).
