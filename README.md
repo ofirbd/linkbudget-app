@@ -12,7 +12,10 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 * **Multiple Propagation Models:** Choose between FSPL, Hata, Egli, Plane-Earth, and Log-Distance.
 * **Environmental Modifiers:** Stack additional real-world losses like Vegetation Depth on top of your core models.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders.
-* **Visual Data:** Dynamic charting of signal loss over distance.
+* **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
+  * **RSL (dBm):** View the raw received signal strength mapped against your receiver's sensitivity threshold.
+  * **Fade Margin (dB):** Visualize the exact buffer your link has before failure (0 dB).
+  * **Path Loss (dB):** Isolate and graph the pure environmental/distance loss independent of your radio hardware.
 * **Persistent Storage:** Automatically saves your last used radio and antenna parameters across sessions.
 * **Export Tool:** One-click generation and download of CSV reports for your calculations.
 
