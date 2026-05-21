@@ -9,10 +9,11 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
-* **Multiple Propagation Models:** Choose between FSPL, Hata (Urban), COST-231 Hata (PCS), Ericsson (Urban), SUI (Suburban), Egli, Plane-Earth, and Log-Distance.
+* **Multiple Propagation Models:** Choose between FSPL, Hata, COST-231 Hata, Ericsson, SUI, Egli, Plane-Earth, and Log-Distance.
+* **Dynamic Environment Modifiers:** For supported models (Hata, COST-231, and Ericsson), a smart UI segmented control appears, allowing you to instantly toggle the internal math engine between **Urban**, **Suburban**, and **Rural** environments.
 * **Smart Frequency Validation:** The calculator actively monitors your selected frequency against the mathematical boundaries of your chosen model. If you push the frequency outside a model's validated range, the UI issues a soft visual warning. This keeps you informed of the mathematical constraints while still allowing you the freedom to intentionally extrapolate.
-* **Environmental Modifiers:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
-* **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders.
+* **Stackable Attenuations:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
+* **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders. Both the RSL and Fade Margin KPIs dynamically color-code (green/red) to indicate connection success.
 * **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
   * **RSL (dBm):** View the raw received signal strength mapped against your receiver's sensitivity threshold.
   * **Fade Margin (dB):** Visualize the exact buffer your link has before failure (0 dB).
@@ -31,20 +32,23 @@ The simplest model, assuming an unobstructed, straight-line line-of-sight path t
 * **Best used for:** Space communications, point-to-point microwave links with high clearance, or baseline theoretical maximums.
 * **Calculation:** Depends solely on the frequency ($f$) and the distance ($d$). Signal strength degrades strictly due to the natural geometric expansion of the wave front.
 
-### 2. Hata Model (Urban)
-An empirical formulation based on the Okumura data, widely used for predicting path loss in built-up urban environments.
+### 2. Hata Model
+An empirical formulation based on the Okumura data, widely used for predicting path loss in built-up environments.
 * **Best used for:** Traditional cellular networks and mobile communications in cities with dense buildings. Valid generally for **150 MHz to 1500 MHz**.
-* **Calculation:** Incorporates the height of the transmitter antenna ($h_{te}$) and the receiver antenna ($h_{re}$) alongside frequency and distance. It assumes heavy scattering and diffraction over rooftops.
+* **Calculation:** Incorporates the height of the transmitter antenna ($h_{te}$) and the receiver antenna ($h_{re}$) alongside frequency and distance. It assumes heavy scattering and diffraction over rooftops. 
+* **Environment Modifiers:** Toggling to Suburban or Rural mathematically subtracts specific Okumura-Hata empirical correction factors from the baseline Urban calculation, significantly reducing the calculated path loss.
 
-### 3. COST-231 Hata Model (PCS Urban)
+### 3. COST-231 Hata Model
 An extension of the original Hata model, specifically formulated by the European COST committee to accurately predict path loss at higher frequencies.
 * **Best used for:** Modern cellular networks, PCS, and higher-frequency mobile communications. Valid for **1500 MHz to 2000 MHz (2 GHz)**.
-* **Calculation:** Uses the same inputs as the standard Hata model (antenna heights, distance) but alters the base mathematical constants to account for the increased absorption and scattering effects at 2 GHz, including an automatic 3 dB metropolitan center correction factor.
+* **Calculation:** Uses the same inputs as the standard Hata model (antenna heights, distance) but alters the base mathematical constants to account for the increased absorption and scattering effects at 2 GHz. It automatically applies a 3 dB metropolitan center correction factor when set to Urban.
+* **Environment Modifiers:** Supports Urban, Suburban, and Rural toggles.
 
-### 4. Ericsson Model (Urban)
+### 4. Ericsson Model
 A highly respected macrocellular model developed by Ericsson that adapts elements of the Okumura-Hata model but introduces specific gradient adjustments for frequency scaling.
-* **Best used for:** Urban macrocells where you need an alternative predictive gradient to standard Hata. Valid between **150 MHz and 1900 MHz**.
+* **Best used for:** Urban/Suburban macrocells where you need an alternative predictive gradient to standard Hata. Valid between **150 MHz and 1900 MHz**.
 * **Calculation:** Uses deterministic equations based on distance and Tx/Rx heights, heavily augmented by a specialized non-linear frequency correction factor.
+* **Environment Modifiers:** The internal engine automatically hot-swaps the base $a_0$ and $a_1$ path-loss coefficients based on whether you select Urban, Suburban, or Rural.
 
 ### 5. SUI (Stanford University Interim) Model
 A model specifically calibrated by IEEE 802.16 for broadband wireless access, specifically suited for fixed-wireless links in higher frequency bands.
