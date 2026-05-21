@@ -14,11 +14,13 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 * **Smart Parameter Validation:** The calculator actively monitors your selected parameters (Frequency and Distance) against the mathematical boundaries of your chosen model. If you push the frequency or distance outside a model's validated range, the UI issues a soft visual warning. This keeps you informed of the mathematical constraints while still allowing you the freedom to intentionally extrapolate.
 * **High-Granularity Distances:** The distance slider steps in fine 100-meter (0.1 km) increments, allowing for precise modeling of highly localized indoor scenarios, macrocells, and long-range microwave shots up to 100 km.
 * **Stackable Attenuations:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
+* **Fresnel Zone Clearance Calculator:** Crucial for field engineering, the app actively calculates the exact line-of-sight clearance radius required for the 1st Fresnel Zone at the midpoint of your link. This acts as an independent sanity check to ensure your physical environment supports your mathematical line-of-sight assumptions.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders. Both the RSL and Fade Margin KPIs dynamically color-code (green/red) to indicate connection success.
 * **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
   * **RSL (dBm):** View the raw received signal strength mapped against your receiver's sensitivity threshold.
   * **Fade Margin (dB):** Visualize the exact buffer your link has before failure (0 dB).
   * **Path Loss (dB):** Isolate and graph the pure environmental/distance loss independent of your radio hardware.
+* **System Setup Illustration:** A responsive SVG diagram that visualizes your Tx and Rx towers, explicitly illustrating the straight RF Line-of-Sight and the elliptical "radio tube" representing the 1st Fresnel Zone.
 * **Persistent Storage:** Automatically saves your last used radio and antenna parameters across sessions.
 * **Export Tool:** One-click generation and download of CSV reports for your calculations.
 
