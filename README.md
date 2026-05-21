@@ -5,12 +5,12 @@ A modern, responsive, and completely offline-capable web application for perform
 This project is a modernization of a legacy Java Swing desktop application, rewritten entirely into a **single, self-contained HTML file** with zero runtime dependencies. It is designed to run flawlessly on both desktop monitors and mobile devices.
 
 ## 🚀 Live Demo
-[Link Budget-App](https://ofirbd.github.io/linkbudget-app/)
+**[Link Budget-App](https://ofirbd.github.io/linkbudget-app/)**
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
 * **Multiple Propagation Models:** Choose between FSPL, Hata, Egli, Plane-Earth, and Log-Distance.
-* **Environmental Modifiers:** Stack additional real-world losses like Vegetation Depth on top of your core models.
+* **Environmental Modifiers:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders.
 * **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
   * **RSL (dBm):** View the raw received signal strength mapped against your receiver's sensitivity threshold.
@@ -56,10 +56,13 @@ A flexible, empirical model used to predict propagation loss inside buildings or
 
 ### Vegetation Loss (Weissberger's Model)
 Trees and foliage absorb and scatter RF signals, especially at higher frequencies. This calculator utilizes **Weissberger's Modified Exponential Decay Model** (an ITU-recognized standard) to calculate this specific loss, which is then added dynamically on top of your chosen propagation model.
-
 * **Calculation:** The loss is dynamically calculated based on the operating frequency (converted to GHz) and the depth of the vegetation ($d$) in meters. 
   * If the foliage depth is less than 14 meters, the model uses a specific curve to account for the rapid initial scattering effect: $L_{veg} = 1.33 \cdot f^{0.284} \cdot d^{0.588}$
   * If the foliage depth is greater than 14 meters, the wave is fully inside the canopy, and it switches to a linear decay rate: $L_{veg} = 0.45 \cdot f^{0.284} \cdot d$
+
+### Rain Attenuation (ITU-R P.838)
+High-frequency microwave links are highly susceptible to signal degradation caused by rain fade. This calculator implements an approximation of the official **ITU-R P.838** power-law standard to estimate specific attenuation based on localized rainfall.
+* **Calculation:** The specific attenuation ($\gamma_R$ in dB/km) is calculated using the power-law relationship $\gamma_R = k \cdot R^\alpha$, where $R$ is the rainfall rate in mm/hr. Because the coefficients $k$ and $\alpha$ vary significantly depending on the operating frequency, the calculator dynamically interpolates them using an embedded lookup table spanning from 1 GHz to 100 GHz, ensuring accurate rain fade penalties for both lower-frequency cellular links and high-frequency microwave backhauls.
 
 ---
 
