@@ -9,7 +9,7 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
-* **Multiple Propagation Models:** Choose between FSPL, Hata, Egli, Plane-Earth, and Log-Distance.
+* **Multiple Propagation Models:** Choose between FSPL, Hata (Urban), COST-231 Hata (PCS), Egli, Plane-Earth, and Log-Distance.
 * **Environmental Modifiers:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders.
 * **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
@@ -32,20 +32,25 @@ The simplest model, assuming an unobstructed, straight-line line-of-sight path t
 
 ### 2. Hata Model (Urban)
 An empirical formulation based on the Okumura data, widely used for predicting path loss in built-up urban environments.
-* **Best used for:** Cellular networks and mobile communications in cities with dense buildings. Valid generally for 150 MHz to 1500 MHz.
+* **Best used for:** Traditional cellular networks and mobile communications in cities with dense buildings. Valid generally for 150 MHz to 1500 MHz.
 * **Calculation:** Incorporates the height of the transmitter antenna ($h_{te}$) and the receiver antenna ($h_{re}$) alongside frequency and distance. It assumes heavy scattering and diffraction over rooftops.
 
-### 3. Egli Model
+### 3. COST-231 Hata Model (PCS Urban)
+An extension of the original Hata model, specifically formulated by the European COST committee to accurately predict path loss at higher frequencies.
+* **Best used for:** Modern cellular networks, PCS, and higher-frequency mobile communications. Valid for 1500 MHz to 2000 MHz (2 GHz).
+* **Calculation:** Uses the same inputs as the standard Hata model (antenna heights, distance) but alters the base mathematical constants to account for the increased absorption and scattering effects at 2 GHz, including an automatic 3 dB metropolitan center correction factor.
+
+### 4. Egli Model
 A terrain-based model specifically designed for irregular terrain, hills, and uneven landscapes.
 * **Best used for:** VHF/UHF television and radio broadcasting, or rural/suburban communications over uneven ground. Valid between 40 MHz and 1000 MHz.
 * **Calculation:** It is fundamentally a modified 2-ray model that introduces an empirical terrain factor. It relies heavily on the heights of both the transmitter and receiver antennas.
 
-### 4. Plane-Earth (Ground Bounce) Model
+### 5. Plane-Earth (Ground Bounce) Model
 A theoretical 2-ray model that calculates the interference between the direct line-of-sight wave and a secondary wave that reflects off the flat ground.
 * **Best used for:** Long-distance links over highly flat terrain or large bodies of water where ground reflections cause phase cancellation.
 * **Calculation:** Interestingly, the 2-ray approximation cancels out the frequency term entirely. The loss is calculated purely based on the distance ($d$) and the heights of both antennas ($h_{te}$, $h_{re}$). 
 
-### 5. Log-Distance Model
+### 6. Log-Distance Model
 A flexible, empirical model used to predict propagation loss inside buildings or across specific generalized environments by tweaking a variable called the "Path Loss Exponent" ($\gamma$).
 * **Best used for:** Indoor Wi-Fi, factory floors, or customized environments where you have measured the specific decay rate ($\gamma$).
 * **Calculation:** Uses FSPL to calculate the loss at a specific **Reference Distance ($d_0$)**, and then applies the Path Loss Exponent ($\gamma$) to calculate the exponential decay over the remaining distance. A $\gamma$ of 2.0 represents free space, while 3.0 to 6.0 represent increasingly dense environments (like offices or concrete buildings).
@@ -77,3 +82,4 @@ Since this is a single-file application, usage is incredibly simple:
 * **Styling:** Tailwind CSS (Dark Mode by default)
 * **Charting:** Recharts
 * **Build System:** Vite (compiled via `vite-plugin-singlefile` to bypass local file security restrictions and generate a 100% standalone artifact).
+```
