@@ -9,8 +9,8 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 
 ## ✨ Features
 * **100% Offline Capability:** The entire application (HTML, CSS, JavaScript, and math engine) is bundled into a single `index.html` file. No internet connection or backend server is required to run it.
-* **Multiple Propagation Models:** Choose between FSPL, Hata, COST-231 Hata, Ericsson, SUI, Egli, Plane-Earth, and Log-Distance.
-* **Dynamic Environment Modifiers:** For supported models (Hata, COST-231, and Ericsson), a smart UI segmented control appears, allowing you to instantly toggle the internal math engine between **Urban**, **Suburban**, and **Rural** environments.
+* **Multiple Propagation Models:** Choose between FSPL, 3GPP TR 38.901, Hata, COST-231 Hata, Ericsson, SUI, Egli, Plane-Earth, and Log-Distance.
+* **Dynamic Environment Modifiers:** For supported models, a smart UI segmented control appears, allowing you to instantly toggle the internal math engine between environments (e.g. **Urban**, **Suburban**, **Rural** or **UMa**, **UMi**, **RMa** for 3GPP).
 * **Smart Frequency Validation:** The calculator actively monitors your selected frequency against the mathematical boundaries of your chosen model. If you push the frequency outside a model's validated range, the UI issues a soft visual warning. This keeps you informed of the mathematical constraints while still allowing you the freedom to intentionally extrapolate.
 * **Stackable Attenuations:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders. Both the RSL and Fade Margin KPIs dynamically color-code (green/red) to indicate connection success.
@@ -32,40 +32,47 @@ The simplest model, assuming an unobstructed, straight-line line-of-sight path t
 * **Best used for:** Space communications, point-to-point microwave links with high clearance, or baseline theoretical maximums.
 * **Calculation:** Depends solely on the frequency ($f$) and the distance ($d$). Signal strength degrades strictly due to the natural geometric expansion of the wave front.
 
-### 2. Hata Model
+### 2. 3GPP TR 38.901
+A modern, highly complex statistical propagation model standardized by 3GPP for next-generation mobile networks (5G NR).
+* **Best used for:** Modern 5G and millimeter-wave network planning across an extremely wide frequency spectrum. Valid from **500 MHz up to 100 GHz**.
+* **Calculation:** Replaces rigid empirical formulas with dynamic breakpoint distance calculations ($d_{BP}$) that vary precisely based on your Tx and Rx antenna heights. 
+* **Environment Modifiers:** Supports standard 3GPP environments: **UMa** (Urban Macro), **UMi** (Urban Micro - Street Canyon), and **RMa** (Rural Macro).
+* **Path Type (LOS/NLOS):** Introduces an exclusive Line-of-Sight vs Non-Line-of-Sight toggle. Selecting NLOS calculates a massive scattering penalty and enforces the 3GPP requirement that NLOS loss must always mathematically exceed LOS loss.
+
+### 3. Hata Model
 An empirical formulation based on the Okumura data, widely used for predicting path loss in built-up environments.
 * **Best used for:** Traditional cellular networks and mobile communications in cities with dense buildings. Valid generally for **150 MHz to 1500 MHz**.
 * **Calculation:** Incorporates the height of the transmitter antenna ($h_{te}$) and the receiver antenna ($h_{re}$) alongside frequency and distance. It assumes heavy scattering and diffraction over rooftops. 
 * **Environment Modifiers:** Toggling to Suburban or Rural mathematically subtracts specific Okumura-Hata empirical correction factors from the baseline Urban calculation, significantly reducing the calculated path loss.
 
-### 3. COST-231 Hata Model
+### 4. COST-231 Hata Model
 An extension of the original Hata model, specifically formulated by the European COST committee to accurately predict path loss at higher frequencies.
 * **Best used for:** Modern cellular networks, PCS, and higher-frequency mobile communications. Valid for **1500 MHz to 2000 MHz (2 GHz)**.
 * **Calculation:** Uses the same inputs as the standard Hata model (antenna heights, distance) but alters the base mathematical constants to account for the increased absorption and scattering effects at 2 GHz. It automatically applies a 3 dB metropolitan center correction factor when set to Urban.
 * **Environment Modifiers:** Supports Urban, Suburban, and Rural toggles.
 
-### 4. Ericsson Model
+### 5. Ericsson Model
 A highly respected macrocellular model developed by Ericsson that adapts elements of the Okumura-Hata model but introduces specific gradient adjustments for frequency scaling.
 * **Best used for:** Urban/Suburban macrocells where you need an alternative predictive gradient to standard Hata. Valid between **150 MHz and 1900 MHz**.
 * **Calculation:** Uses deterministic equations based on distance and Tx/Rx heights, heavily augmented by a specialized non-linear frequency correction factor.
 * **Environment Modifiers:** The internal engine automatically hot-swaps the base $a_0$ and $a_1$ path-loss coefficients based on whether you select Urban, Suburban, or Rural.
 
-### 5. SUI (Stanford University Interim) Model
+### 6. SUI (Stanford University Interim) Model
 A model specifically calibrated by IEEE 802.16 for broadband wireless access, specifically suited for fixed-wireless links in higher frequency bands.
 * **Best used for:** Fixed-wireless access (WiMAX, proprietary backhauls) in suburban environments. Valid for **1.9 GHz to 11 GHz**.
 * **Calculation:** It relies on an initial Free Space calculation out to a 100m reference distance, followed by a heavily augmented Path Loss exponent determined by the base station height and specific terrain categories (this calculator defaults to Terrain Category B: Suburban).
 
-### 6. Egli Model
+### 7. Egli Model
 A terrain-based model specifically designed for irregular terrain, hills, and uneven landscapes.
 * **Best used for:** VHF/UHF television and radio broadcasting, or rural/suburban communications over uneven ground. Valid between **40 MHz and 1000 MHz**.
 * **Calculation:** It is fundamentally a modified 2-ray model that introduces an empirical terrain factor. It relies heavily on the heights of both the transmitter and receiver antennas.
 
-### 7. Plane-Earth (Ground Bounce) Model
+### 8. Plane-Earth (Ground Bounce) Model
 A theoretical 2-ray model that calculates the interference between the direct line-of-sight wave and a secondary wave that reflects off the flat ground.
 * **Best used for:** Long-distance links over highly flat terrain or large bodies of water where ground reflections cause phase cancellation.
 * **Calculation:** Interestingly, the 2-ray approximation cancels out the frequency term entirely. The loss is calculated purely based on the distance ($d$) and the heights of both antennas ($h_{te}$, $h_{re}$). 
 
-### 8. Log-Distance Model
+### 9. Log-Distance Model
 A flexible, empirical model used to predict propagation loss inside buildings or across specific generalized environments by tweaking a variable called the "Path Loss Exponent" ($\gamma$).
 * **Best used for:** Indoor Wi-Fi, factory floors, or customized environments where you have measured the specific decay rate ($\gamma$).
 * **Calculation:** Uses FSPL to calculate the loss at a specific **Reference Distance ($d_0$)**, and then applies the Path Loss Exponent ($\gamma$) to calculate the exponential decay over the remaining distance. A $\gamma$ of 2.0 represents free space, while 3.0 to 6.0 represent increasingly dense environments (like offices or concrete buildings).
