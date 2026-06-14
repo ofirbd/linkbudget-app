@@ -207,11 +207,10 @@ export default function App() {
           <button 
             onClick={() => setShowDocs(true)}
             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white border border-slate-700 rounded-lg transition-colors shadow-sm self-start sm:self-auto"
-            title="Read the Math Documentation"
+            title="Help & Operation Manual"
           >
             <BookOpen className="w-4 h-4" />
-            <span className="hidden sm:inline">Documentation</span>
-            <span className="inline sm:hidden">Docs</span>
+            <span>Help</span>
           </button>
         </div>
         

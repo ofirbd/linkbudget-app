@@ -11,7 +11,7 @@ export function DocumentationModal({ onClose }: DocumentationModalProps) {
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/95 sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-100">Math Documentation</h2>
+          <h2 className="text-xl font-bold text-slate-100">Help & Operation Manual</h2>
           <button 
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
@@ -22,9 +22,32 @@ export function DocumentationModal({ onClose }: DocumentationModalProps) {
 
         {/* Content */}
         <div className="p-6 overflow-y-auto custom-scrollbar prose prose-invert prose-slate max-w-none text-slate-300">
-          <p className="text-lg text-slate-400 mb-8">
-            This tool computes Radio Frequency (RF) link budgets using several standard mathematical propagation models. 
-            Below is a brief explanation of each model, its intended use cases, and how the internal engine calculates the loss.
+          
+          <h3 className="text-blue-400 border-b border-slate-700 pb-2">Operation Manual</h3>
+          <p className="mb-4 text-slate-400">
+            Welcome to the RF Link Budget Calculator. This tool instantly computes Link Margin, Received Signal Level (RSL), and Path Loss as you adjust the parameters. To operate the tool, select your desired propagation model, configure the system and environment parameters, and analyze the results in the KPI cards and distance sweep chart.
+          </p>
+          
+          <h4 className="text-slate-200 mt-4 font-semibold">System Parameters</h4>
+          <ul className="list-disc pl-5 mb-6 text-slate-400">
+            <li><strong>Propagation Model:</strong> The mathematical theory used to calculate Path Loss. Different models are suitable for different frequencies and environments.</li>
+            <li><strong>Environment:</strong> Modifies the model's calculation based on terrain density (e.g., Urban vs Rural).</li>
+            <li><strong>Frequency (MHz):</strong> The operating frequency of your radio link. Higher frequencies generally experience greater path loss.</li>
+            <li><strong>Distance (km):</strong> The physical line-of-sight distance between the Transmitter (Tx) and Receiver (Rx).</li>
+          </ul>
+
+          <h4 className="text-slate-200 mt-4 font-semibold">Transmitter (Tx) & Receiver (Rx)</h4>
+          <ul className="list-disc pl-5 mb-6 text-slate-400">
+            <li><strong>Tx Power (dBm):</strong> The output power of your transmitting radio.</li>
+            <li><strong>Tx/Rx Cable Loss (dB):</strong> The signal loss caused by the cables and connectors connecting the radio to the antenna.</li>
+            <li><strong>Tx/Rx Antenna Gain (dBi):</strong> The directional amplification provided by your antennas. Higher gain focuses the beam, increasing signal strength.</li>
+            <li><strong>Tx/Rx Height (m):</strong> The height of the antennas above ground level. Crucial for calculating diffraction and ground reflections in advanced models.</li>
+            <li><strong>Rx Sensitivity (dBm):</strong> The minimum signal strength your receiver needs to successfully decode data. If your RSL drops below this, the link fails (Fade Margin ≤ 0).</li>
+          </ul>
+
+          <h3 className="text-blue-400 border-b border-slate-700 pb-2 mt-8">Math Documentation</h3>
+          <p className="text-lg text-slate-400 mb-8 mt-4">
+            Below is a brief explanation of each propagation model, its intended use cases, and how the internal engine calculates the loss.
           </p>
 
           <h3 className="text-blue-400 border-b border-slate-700 pb-2">1. Free Space Path Loss (FSPL)</h3>
