@@ -175,7 +175,3 @@ export default function App() {
 }
 ```
 
-> [!NOTE]
-> **User Review Required**
-> Please review the `implementation_plan.md` architecture. Does this align with your expectations for the framework choices, mobile-first design, and math module separation?
-> If you approve, I will proceed with creating a new Vite + React project and wiring up the logic.
