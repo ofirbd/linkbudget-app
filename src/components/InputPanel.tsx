@@ -150,9 +150,21 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
 
   const renderSlider = (label: string, name: keyof Params, min: number, max: number, step: number, unit: string) => (
     <div className="mb-4">
-      <div className="flex justify-between mb-1">
+      <div className="flex justify-between items-center mb-2">
         <label className="text-sm font-medium text-slate-300">{label}</label>
-        <span className="text-sm text-slate-400">{params[name]} {unit}</span>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            name={name}
+            min={min}
+            max={max}
+            step={step}
+            value={params[name]}
+            onChange={handleChange}
+            className="w-20 bg-slate-800 border border-slate-600 text-slate-100 rounded px-2 py-1 text-right text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+          {unit && <span className="text-sm text-slate-400 w-8">{unit}</span>}
+        </div>
       </div>
       <input
         type="range"

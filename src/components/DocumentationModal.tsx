@@ -11,7 +11,7 @@ export function DocumentationModal({ onClose }: DocumentationModalProps) {
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/95 sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-100">Help & Operation Manual</h2>
+          <h2 className="text-xl font-bold text-slate-100">RF Link Budget Analysis</h2>
           <button 
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
@@ -145,6 +145,10 @@ export function DocumentationModal({ onClose }: DocumentationModalProps) {
             High-frequency microwave links are highly susceptible to signal degradation caused by rain fade. This calculator implements an approximation of the official <strong>ITU-R P.838</strong> power-law standard to estimate specific attenuation based on localized rainfall. The internal engine dynamically interpolates power-law coefficients based on your exact frequency to ensure accurate rain fade penalties.
           </p>
           
+          <div className="mt-8 p-4 bg-amber-900/20 border border-amber-700/50 rounded-lg text-amber-200/90 text-sm leading-relaxed">
+            <strong className="text-amber-400">Important Notice:</strong> The calculations provided by this application are theoretical approximations derived from standard mathematical models. Real-world performance may vary significantly due to unpredictable environmental factors such as complex topography, foliage density, structural obstacles, and electromagnetic interference. These estimations should not replace physical site surveys or professional field testing when planning mission-critical radio networks.
+          </div>
+
           <div className="mt-8 pt-6 border-t border-slate-700 text-center text-slate-500 text-sm">
             <p>Calculations run entirely client-side on your device.</p>
           </div>
