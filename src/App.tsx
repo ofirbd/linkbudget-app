@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Download, BookOpen } from 'lucide-react';
-import { calculateFSPL, calculateHataUrban, calculateCost231Hata, calculateEgli, calculateEricsson, calculate3GPP38901, calculateITUR1238, calculateSUI, calculateRSL, calculateLinkMargin, calculateLogDistance, calculatePlaneEarth, calculateVegetationLoss, calculateRainAttenuation, calculateFresnelZone } from './lib/rfMath';
+import { calculateFSPL, calculateHataUrban, calculateCost231Hata, calculateEgli, calculateEricsson, calculate3GPP38901, calculateITUR1238, calculateSUI, calculateRSL, calculateLinkMargin, calculateLogDistance, calculatePlaneEarth, calculateVegetationLoss, calculateRainAttenuation, calculateFresnelZone, calculateSensitivity } from './lib/rfMath';
 import { InputPanel, KPICards, ChartView, SystemDiagram, DocumentationModal } from './components';
 
 export default function App() {
@@ -16,6 +16,10 @@ export default function App() {
     rxGain: 15,
     rxLoss: 1,
     rxSensitivity: -90,
+    calcSensitivity: false,
+    bandwidth: 20,
+    noiseFigure: 5,
+    requiredSnr: 10,
     distance: 10,
     hte: 30,
     hre: 2,
@@ -79,7 +83,8 @@ export default function App() {
     pathLoss += calculateRainAttenuation(params.frequency, params.distance, params.rainRate);
        
     const rsl = calculateRSL(params.txPower, params.txLoss, params.txGain, pathLoss, params.rxGain, params.rxLoss);
-    const margin = calculateLinkMargin(rsl, params.rxSensitivity);
+    const effectiveSensitivity = params.calcSensitivity ? calculateSensitivity(params.bandwidth, params.noiseFigure, params.requiredSnr) : params.rxSensitivity;
+    const margin = calculateLinkMargin(rsl, effectiveSensitivity);
     const fresnelClearance = calculateFresnelZone(params.frequency, params.distance);
     
     return { pathLoss, rsl, margin, eirp: params.txPower - params.txLoss + params.txGain, fresnelClearance };
@@ -119,7 +124,8 @@ export default function App() {
        loss += calculateRainAttenuation(params.frequency, d, params.rainRate);
        
        const rsl = calculateRSL(params.txPower, params.txLoss, params.txGain, loss, params.rxGain, params.rxLoss);
-       const margin = calculateLinkMargin(rsl, params.rxSensitivity);
+       const effectiveSensitivity = params.calcSensitivity ? calculateSensitivity(params.bandwidth, params.noiseFigure, params.requiredSnr) : params.rxSensitivity;
+       const margin = calculateLinkMargin(rsl, effectiveSensitivity);
        data.push({ distance: Number(d.toFixed(2)), pathLoss: loss, rsl, margin });
     }
     return data;
@@ -217,7 +223,7 @@ export default function App() {
         <KPICards results={results} model={params.model} />
         
         <div className="flex-1 min-h-[400px] mb-4">
-           <ChartView data={chartData} currentDistance={params.distance} rxSensitivity={params.rxSensitivity} />
+           <ChartView data={chartData} currentDistance={params.distance} rxSensitivity={params.calcSensitivity ? calculateSensitivity(params.bandwidth, params.noiseFigure, params.requiredSnr) : params.rxSensitivity} />
         </div>
         
         <SystemDiagram model={params.model} />

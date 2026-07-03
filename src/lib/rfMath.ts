@@ -287,3 +287,12 @@ export function calculateFresnelZone(f: number, d: number): number {
   const f_GHz = f / 1000;
   return 8.66 * Math.sqrt(d / f_GHz);
 }
+
+// Receiver Sensitivity based on Thermal Noise Floor
+// bandwidthMhz: Channel bandwidth in MHz, noiseFigure: Receiver noise figure in dB, snr: Required Signal-to-Noise Ratio in dB
+export function calculateSensitivity(bandwidthMhz: number, noiseFigure: number, snr: number): number {
+  if (bandwidthMhz <= 0) return 0;
+  // Thermal Noise Floor (dBm) = -174 + 10 * log10(Bandwidth in Hz)
+  const thermalNoiseFloor = -174 + 10 * Math.log10(bandwidthMhz * 1e6);
+  return thermalNoiseFloor + noiseFigure + snr;
+}

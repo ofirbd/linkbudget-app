@@ -14,8 +14,21 @@ interface KPICardsProps {
 }
 
 export function KPICards({ results, model }: KPICardsProps) {
-  const isConnected = results.margin > 0;
   const showFresnel = model !== 'ITUR1238';
+
+  let statusBg = 'bg-rose-900/20 border-rose-800/50';
+  let statusText = 'text-rose-400';
+  let statusIcon = 'text-rose-500';
+
+  if (results.margin >= 10) {
+    statusBg = 'bg-emerald-900/20 border-emerald-800/50';
+    statusText = 'text-emerald-400';
+    statusIcon = 'text-emerald-500';
+  } else if (results.margin >= 0) {
+    statusBg = 'bg-amber-900/20 border-amber-800/50';
+    statusText = 'text-amber-400';
+    statusIcon = 'text-amber-500';
+  }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -35,22 +48,22 @@ export function KPICards({ results, model }: KPICardsProps) {
         <div className="text-2xl font-bold text-slate-100">{results.pathLoss.toFixed(1)} <span className="text-sm font-normal text-slate-400">dB</span></div>
       </div>
 
-      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${isConnected ? 'bg-emerald-900/20 border-emerald-800/50' : 'bg-rose-900/20 border-rose-800/50'}`}>
+      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
         <div className="flex items-center gap-2 mb-2">
-          <Activity className={`w-4 h-4 ${isConnected ? 'text-emerald-500' : 'text-rose-500'}`} />
-          <span className={`text-sm font-medium ${isConnected ? 'text-emerald-400' : 'text-rose-400'}`}>RSL</span>
+          <Activity className={`w-4 h-4 ${statusIcon}`} />
+          <span className={`text-sm font-medium ${statusText}`}>RSL</span>
         </div>
-        <div className={`text-2xl font-bold ${isConnected ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <div className={`text-2xl font-bold ${statusText}`}>
           {results.rsl.toFixed(1)} <span className="text-sm font-normal opacity-80">dBm</span>
         </div>
       </div>
 
-      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${isConnected ? 'bg-emerald-900/20 border-emerald-800/50' : 'bg-rose-900/20 border-rose-800/50'}`}>
+      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
         <div className="flex items-center gap-2 mb-2">
-          <ShieldCheck className={`w-4 h-4 ${isConnected ? 'text-emerald-500' : 'text-rose-500'}`} />
-          <span className={`text-sm font-medium ${isConnected ? 'text-emerald-400' : 'text-rose-400'}`}>Fade Margin</span>
+          <ShieldCheck className={`w-4 h-4 ${statusIcon}`} />
+          <span className={`text-sm font-medium ${statusText}`}>Fade Margin</span>
         </div>
-        <div className={`text-2xl font-bold ${isConnected ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <div className={`text-2xl font-bold ${statusText}`}>
           {results.margin > 0 ? '+' : ''}{results.margin.toFixed(1)} <span className="text-sm font-normal opacity-80">dB</span>
         </div>
       </div>

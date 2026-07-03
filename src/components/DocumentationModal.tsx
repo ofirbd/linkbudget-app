@@ -45,6 +45,13 @@ export function DocumentationModal({ onClose }: DocumentationModalProps) {
             <li><strong>Rx Sensitivity (dBm):</strong> The minimum signal strength your receiver needs to successfully decode data. If your RSL drops below this, the link fails (Fade Margin ≤ 0).</li>
           </ul>
 
+          <h4 className="text-slate-200 mt-4 font-semibold">Key Performance Indicators (KPIs)</h4>
+          <ul className="list-disc pl-5 mb-6 text-slate-400">
+            <li><strong>Received Signal Level (RSL):</strong> The actual signal strength arriving at the receiver after all gains and losses are applied.</li>
+            <li><strong>Fade Margin:</strong> The "buffer" or difference between your RSL and the Receiver Sensitivity. A margin ≥ 10 dB is generally required for a reliable outdoor link to account for unpredictable fading. If the margin drops below 0 dB, the link will fail.</li>
+            <li><strong>Fresnel Zone:</strong> The required clearance radius around the direct line-of-sight path to avoid signal diffraction loss.</li>
+          </ul>
+
           <h3 className="text-blue-400 border-b border-slate-700 pb-2 mt-8">Math Documentation</h3>
           <p className="text-lg text-slate-400 mb-8 mt-4">
             Below is a brief explanation of each propagation model, its intended use cases, and how the internal engine calculates the loss.

@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
 import { Settings2, Info } from 'lucide-react';
+import { calculateSensitivity } from '../lib/rfMath';
 
 interface Params {
   frequency: number;
@@ -9,6 +10,10 @@ interface Params {
   rxGain: number;
   rxLoss: number;
   rxSensitivity: number;
+  calcSensitivity: boolean;
+  bandwidth: number;
+  noiseFigure: number;
+  requiredSnr: number;
   distance: number;
   hte: number;
   hre: number;
@@ -159,7 +164,7 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
             min={min}
             max={max}
             step={step}
-            value={params[name]}
+            value={params[name] as number}
             onChange={handleChange}
             className="w-20 bg-slate-800 border border-slate-600 text-slate-100 rounded px-2 py-1 text-right text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
@@ -172,7 +177,7 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
         min={min}
         max={max}
         step={step}
-        value={params[name]}
+        value={params[name] as number}
         onChange={handleChange}
         className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
       />
@@ -264,9 +269,44 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
           <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-3">Receiver (Rx)</h3>
           {renderSlider('Rx Antenna Gain', 'rxGain', -20, 30, 0.5, 'dBi')}
           {renderSlider('Rx Cable Loss', 'rxLoss', 0, 10, 0.1, 'dB')}
-          {renderSlider('Rx Sensitivity', 'rxSensitivity', -130, -50, 1, 'dBm')}
           {(['HataUrban', 'Cost231Hata', 'Ericsson', 'SUI', 'Egli', 'PlaneEarth', '3GPP'].includes(params.model)) && 
             renderSlider('Rx Height', 'hre', 1, 50, 1, 'm')}
+
+          <div className="mt-6 mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-sm font-medium text-slate-300">Rx Sensitivity Input</label>
+              <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                <button
+                  onClick={() => onChange(prev => ({ ...prev, calcSensitivity: false }))}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${!params.calcSensitivity ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Direct
+                </button>
+                <button
+                  onClick={() => onChange(prev => ({ ...prev, calcSensitivity: true }))}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${params.calcSensitivity ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Calc (SNR)
+                </button>
+              </div>
+            </div>
+
+            {!params.calcSensitivity ? (
+              renderSlider('Rx Sensitivity', 'rxSensitivity', -130, -50, 1, 'dBm')
+            ) : (
+              <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                {renderSlider('Channel Bandwidth', 'bandwidth', 1, 100, 1, 'MHz')}
+                {renderSlider('Noise Figure', 'noiseFigure', 0, 20, 0.5, 'dB')}
+                {renderSlider('Required SNR', 'requiredSnr', 0, 40, 0.5, 'dB')}
+                <div className="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center">
+                  <span className="text-sm font-medium text-slate-400">Calculated Sensitivity:</span>
+                  <span className="text-sm font-bold text-blue-400">
+                    {calculateSensitivity(params.bandwidth, params.noiseFigure, params.requiredSnr).toFixed(1)} dBm
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
