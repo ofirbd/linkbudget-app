@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
 import { Settings2, Info } from 'lucide-react';
 import { calculateSensitivity } from '../lib/rfMath';
@@ -14,6 +15,7 @@ interface Params {
   bandwidth: number;
   noiseFigure: number;
   requiredSnr: number;
+  chartMaxDistance: number;
   distance: number;
   hte: number;
   hre: number;
@@ -33,6 +35,8 @@ interface InputPanelProps {
 }
 
 export function InputPanel({ params, onChange }: InputPanelProps) {
+  const [showModelDesc, setShowModelDesc] = useState(false);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     onChange(prev => ({
@@ -186,14 +190,22 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
 
   return (
     <div className="flex flex-col flex-1 min-h-0 h-full w-full">
-      <div className="flex items-center gap-2 mb-6 text-xl font-bold text-slate-100">
+      <div className="hidden md:flex items-center gap-2 mb-6 text-xl font-bold text-slate-100">
         <Settings2 className="w-6 h-6 text-blue-500" />
         <h2>Parameters</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-24 custom-scrollbar">
         <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">Propagation Model</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-slate-300">Propagation Model</label>
+            <button 
+              className="md:hidden text-blue-400 hover:text-blue-300 transition-colors p-1 -mr-1"
+              onClick={() => setShowModelDesc(!showModelDesc)}
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
           <select
             name="model"
             value={params.model}
@@ -216,8 +228,8 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
         {renderEnvironmentToggle()}
         {renderPathTypeToggle()}
 
-        <div className="mb-6 bg-blue-900/20 border border-blue-800/50 p-3 rounded-lg flex gap-3 items-start shadow-sm">
-          <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+        <div className={`${showModelDesc ? 'flex' : 'hidden'} md:flex mb-6 bg-blue-900/20 border border-blue-800/50 p-3 rounded-lg gap-3 items-start shadow-sm`}>
+          <Info className="hidden md:block w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
           <p className="text-sm text-blue-200/90 leading-relaxed">
             {getModelDescription()}
           </p>
@@ -255,7 +267,8 @@ export function InputPanel({ params, onChange }: InputPanelProps) {
             </div>
           )}
           
-          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-3">Environment</h3>
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-3">Environment & Sweep</h3>
+          {renderSlider('Chart Max Distance', 'chartMaxDistance', 1, 100, 1, 'km')}
           {renderSlider('Vegetation Depth', 'vegetationDepth', 0, 100, 1, 'm')}
           {renderSlider('Rainfall Rate', 'rainRate', 0, 150, 1, 'mm/hr')}
           

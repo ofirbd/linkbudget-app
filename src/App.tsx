@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Download, BookOpen } from 'lucide-react';
+import { Download, BookOpen, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
 import { calculateFSPL, calculateHataUrban, calculateCost231Hata, calculateEgli, calculateEricsson, calculate3GPP38901, calculateITUR1238, calculateSUI, calculateRSL, calculateLinkMargin, calculateLogDistance, calculatePlaneEarth, calculateVegetationLoss, calculateRainAttenuation, calculateFresnelZone, calculateSensitivity } from './lib/rfMath';
 import { InputPanel, KPICards, ChartView, SystemDiagram, DocumentationModal } from './components';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'inputs' | 'results'>('inputs');
+  const [sheetState, setSheetState] = useState<'collapsed' | 'partial' | 'half' | 'expanded'>('partial');
+  const [touchStartY, setTouchStartY] = useState(0);
   const [showDocs, setShowDocs] = useState(false);
   
   // 1. Core State
@@ -20,6 +21,7 @@ export default function App() {
     bandwidth: 20,
     noiseFigure: 5,
     requiredSnr: 10,
+    chartMaxDistance: 20,
     distance: 10,
     hte: 30,
     hre: 2,
@@ -93,7 +95,7 @@ export default function App() {
   // 3. Chart Data Generation (Distance Sweep)
   const chartData = useMemo(() => {
     const data = [];
-    const maxDist = Math.max(20, params.distance * 2); // Sweep up to 2x desired distance or at least 20km
+    const maxDist = Math.max(params.chartMaxDistance, params.distance); // Sweep up to user specified max chart range
     const step = maxDist / 100; // 100 points
     
     for(let d = step; d <= maxDist; d += step) {
@@ -144,6 +146,27 @@ export default function App() {
     link.remove();
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaY = touchEndY - touchStartY;
+    
+    if (deltaY > 40) {
+      // Swiped down
+      if (sheetState === 'expanded') setSheetState('half');
+      else if (sheetState === 'half') setSheetState('partial');
+      else if (sheetState === 'partial') setSheetState('collapsed');
+    } else if (deltaY < -40) {
+      // Swiped up
+      if (sheetState === 'collapsed') setSheetState('partial');
+      else if (sheetState === 'partial') setSheetState('half');
+      else if (sheetState === 'half') setSheetState('expanded');
+    }
+  };
+
   const getModelDisplayName = (model: string) => {
     switch (model) {
       case 'FSPL': return 'Free Space (FSPL)';
@@ -173,56 +196,66 @@ export default function App() {
   return (
     <div className="flex flex-col md:flex-row h-[100dvh] bg-slate-900 text-slate-100 overflow-hidden">
       
-      {/* Mobile Tab Bar */}
-      <div className="md:hidden flex bg-slate-800 border-b border-slate-700">
-        <button 
-          className={`flex-1 py-3 text-sm font-semibold transition-colors ${activeTab === 'inputs' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400'}`}
-          onClick={() => setActiveTab('inputs')}
+      {/* Sidebar / Mobile Bottom Sheet for Inputs */}
+      <aside 
+        className={`
+          fixed inset-x-0 bottom-0 z-40 bg-slate-900 border-t border-slate-700 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] rounded-t-3xl transition-transform duration-300 ease-in-out flex flex-col
+          ${sheetState === 'expanded' ? 'translate-y-0 h-[70dvh]' : sheetState === 'half' ? 'translate-y-[calc(100%-50dvh)] h-[70dvh]' : sheetState === 'partial' ? 'translate-y-[calc(100%-25dvh)] h-[70dvh]' : 'translate-y-[calc(100%-4rem)] h-[70dvh]'}
+          md:static md:translate-y-0 md:h-auto md:w-80 md:lg:w-96 md:border-t-0 md:border-r md:rounded-none md:shadow-none md:flex-none
+        `}
+      >
+        {/* Mobile Drag Handle */}
+        <div 
+          className="md:hidden flex items-center justify-between px-6 h-16 cursor-pointer select-none border-b border-slate-800 shrink-0"
+          onClick={() => {
+            if (sheetState === 'collapsed') setSheetState('partial');
+            else if (sheetState === 'partial') setSheetState('half');
+            else if (sheetState === 'half') setSheetState('expanded');
+            else setSheetState('partial');
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          Inputs
-        </button>
-        <button 
-          className={`flex-1 py-3 text-sm font-semibold transition-colors ${activeTab === 'results' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400'}`}
-          onClick={() => setActiveTab('results')}
-        >
-          Results & Charts
-        </button>
-      </div>
-
-      {/* Sidebar for Inputs */}
-      <aside className={`w-full md:w-80 lg:w-96 border-r border-slate-700 p-4 flex-1 min-h-0 md:flex-none flex-col ${activeTab === 'inputs' ? 'flex' : 'hidden md:flex'} flex-shrink-0 bg-slate-900 z-10`}>
-        <InputPanel params={params} onChange={setParams} />
+          <div className="flex items-center gap-2">
+            <Settings2 className="w-5 h-5 text-blue-500" />
+            <span className="font-semibold text-slate-200">System Parameters</span>
+          </div>
+          {sheetState === 'expanded' ? <ChevronDown className="w-5 h-5 text-slate-400" /> : <ChevronUp className="w-5 h-5 text-slate-400" />}
+        </div>
+        
+        {/* Scrollable Input Area */}
+        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          <InputPanel params={params} onChange={setParams} />
+        </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className={`flex-1 flex flex-col p-4 md:p-6 overflow-y-auto ${activeTab === 'results' ? 'block' : 'hidden md:flex'}`}>
-        <div className="mb-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100 mb-2">Link Budget Analysis</h1>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20 shadow-sm shadow-blue-900/20">
-                {getModelDisplayName(params.model)}
+      <main className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto pb-[25dvh] md:pb-6 block">
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold text-slate-100 mb-2">Link Budget Analysis</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-400 ring-1 ring-inset ring-blue-500/20 shadow-sm shadow-blue-900/20">
+              {getModelDisplayName(params.model)}
+            </span>
+            {['HataUrban', 'Cost231Hata', 'Ericsson', '3GPP', 'ITUR1238'].includes(params.model) && (
+              <span className="inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-inset ring-emerald-500/20 shadow-sm shadow-emerald-900/20">
+                {params.model === '3GPP' && `${params.pathType} `}{getEnvDisplayName(params.model, params.environment)}
               </span>
-              {['HataUrban', 'Cost231Hata', 'Ericsson', '3GPP', 'ITUR1238'].includes(params.model) && (
-                <span className="inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-inset ring-emerald-500/20 shadow-sm shadow-emerald-900/20">
-                  {params.model === '3GPP' && `${params.pathType} `}{getEnvDisplayName(params.model, params.environment)}
-                </span>
-              )}
-            </div>
+            )}
+            <button 
+              onClick={() => setShowDocs(true)}
+              className="inline-flex items-center gap-1 rounded-md bg-slate-800/80 px-2.5 py-1 text-xs font-semibold text-slate-300 ring-1 ring-inset ring-slate-700 shadow-sm hover:bg-slate-700 hover:text-white transition-colors ml-auto sm:ml-0"
+              title="Help & Operation Manual"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Help</span>
+            </button>
           </div>
-          <button 
-            onClick={() => setShowDocs(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white border border-slate-700 rounded-lg transition-colors shadow-sm self-start sm:self-auto"
-            title="Help & Operation Manual"
-          >
-            <BookOpen className="w-4 h-4" />
-            <span>Help</span>
-          </button>
         </div>
         
         <KPICards results={results} model={params.model} />
         
-        <div className="flex-1 min-h-[400px] mb-4">
+        <div className="flex-1 min-h-[250px] md:min-h-[400px] mb-4">
            <ChartView data={chartData} currentDistance={params.distance} rxSensitivity={params.calcSensitivity ? calculateSensitivity(params.bandwidth, params.noiseFigure, params.requiredSnr) : params.rxSensitivity} />
         </div>
         

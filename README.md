@@ -13,6 +13,10 @@ A modern, responsive, offline-capable single-file web application for calculatin
 - **Environmental Factors**: Calculate additional losses including Rain Attenuation (ITU-R P.838) and Vegetation Loss (Weissberger's Model).
 - **Fresnel Zone Clearance**: Actively calculates the exact line-of-sight clearance radius required for the 1st Fresnel Zone at the midpoint of your link.
 - **Interactive Visualization**: Dynamic charts (powered by Recharts) showing Distance sweeps against RSL, Fade Margin, or Path Loss.
+- **Advanced Sensitivity Calculator**: Toggle between manual Rx Sensitivity input or calculate it dynamically based on Bandwidth, Noise Figure, and required SNR.
+- **Mobile-First UX**: Features a fluid, 4-state swipable bottom sheet overlay for parameter input on mobile devices, ensuring charts remain visible at all times.
+- **Smart KPI Indicators**: 3-state color coding (Green/Amber/Red) for Fade Margin and RSL to instantly gauge link reliability.
+- **Adjustable Chart Range**: Dynamically expand or shrink the sweep chart's X-axis distance limits.
 - **Data Export**: Easily export sweep analysis data to CSV.
 - **Persistence**: Automatically saves your parameters to `localStorage` so you can pick up where you left off.
 

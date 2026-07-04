@@ -31,58 +31,63 @@ export function KPICards({ results, model }: KPICardsProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm flex flex-col">
-        <div className="flex items-center gap-2 mb-2">
-          <Zap className="w-4 h-4 text-amber-500" />
-          <span className="text-sm font-medium text-slate-400">EIRP</span>
+    <div className="grid grid-cols-6 md:grid-cols-5 gap-2 md:gap-4 mb-4 md:mb-6">
+      {/* 1. RSL */}
+      <div className={`col-span-2 md:col-span-1 p-2 md:p-4 rounded-lg md:rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+          <Activity className={`w-3 h-3 md:w-4 md:h-4 ${statusIcon}`} />
+          <span className={`text-xs md:text-sm font-medium ${statusText}`}>RSL</span>
         </div>
-        <div className="text-2xl font-bold text-slate-100">{results.eirp.toFixed(1)} <span className="text-sm font-normal text-slate-400">dBm</span></div>
-      </div>
-
-      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm flex flex-col">
-        <div className="flex items-center gap-2 mb-2">
-          <RadioTower className="w-4 h-4 text-blue-500" />
-          <span className="text-sm font-medium text-slate-400">Path Loss</span>
-        </div>
-        <div className="text-2xl font-bold text-slate-100">{results.pathLoss.toFixed(1)} <span className="text-sm font-normal text-slate-400">dB</span></div>
-      </div>
-
-      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <Activity className={`w-4 h-4 ${statusIcon}`} />
-          <span className={`text-sm font-medium ${statusText}`}>RSL</span>
-        </div>
-        <div className={`text-2xl font-bold ${statusText}`}>
-          {results.rsl.toFixed(1)} <span className="text-sm font-normal opacity-80">dBm</span>
+        <div className={`text-base md:text-2xl font-bold ${statusText}`}>
+          {results.rsl.toFixed(1)} <span className="text-xs md:text-sm font-normal opacity-80">dBm</span>
         </div>
       </div>
 
-      <div className={`p-4 rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <ShieldCheck className={`w-4 h-4 ${statusIcon}`} />
-          <span className={`text-sm font-medium ${statusText}`}>Fade Margin</span>
+      {/* 2. Fade Margin */}
+      <div className={`col-span-2 md:col-span-1 p-2 md:p-4 rounded-lg md:rounded-xl border shadow-sm flex flex-col ${statusBg}`}>
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+          <ShieldCheck className={`w-3 h-3 md:w-4 md:h-4 ${statusIcon}`} />
+          <span className={`text-xs md:text-sm font-medium ${statusText} leading-tight`}>Fade Margin</span>
         </div>
-        <div className={`text-2xl font-bold ${statusText}`}>
-          {results.margin > 0 ? '+' : ''}{results.margin.toFixed(1)} <span className="text-sm font-normal opacity-80">dB</span>
+        <div className={`text-base md:text-2xl font-bold ${statusText}`}>
+          {results.margin > 0 ? '+' : ''}{results.margin.toFixed(1)} <span className="text-xs md:text-sm font-normal opacity-80">dB</span>
         </div>
       </div>
 
-      <div className={`bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm flex flex-col col-span-2 md:col-span-1 relative group ${showFresnel ? 'cursor-help' : ''}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <Target className={`w-4 h-4 ${showFresnel ? 'text-indigo-400' : 'text-slate-600'}`} />
-          <span className={`text-sm font-medium ${showFresnel ? 'text-slate-400' : 'text-slate-500'}`}>Fresnel (Mid)</span>
+      {/* 3. Path Loss */}
+      <div className="col-span-2 md:col-span-1 bg-slate-800 p-2 md:p-4 rounded-lg md:rounded-xl border border-slate-700 shadow-sm flex flex-col">
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+          <RadioTower className="w-3 h-3 md:w-4 md:h-4 text-blue-500" />
+          <span className="text-xs md:text-sm font-medium text-slate-400 leading-tight">Path Loss</span>
+        </div>
+        <div className="text-base md:text-2xl font-bold text-slate-100">{results.pathLoss.toFixed(1)} <span className="text-xs md:text-sm font-normal text-slate-400">dB</span></div>
+      </div>
+
+      {/* 4. EIRP */}
+      <div className="col-span-3 md:col-span-1 bg-slate-800 p-2 md:p-4 rounded-lg md:rounded-xl border border-slate-700 shadow-sm flex flex-col">
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+          <Zap className="w-3 h-3 md:w-4 md:h-4 text-amber-500" />
+          <span className="text-xs md:text-sm font-medium text-slate-400">EIRP</span>
+        </div>
+        <div className="text-base md:text-2xl font-bold text-slate-100">{results.eirp.toFixed(1)} <span className="text-xs md:text-sm font-normal text-slate-400">dBm</span></div>
+      </div>
+
+      {/* 5. Fresnel */}
+      <div className={`col-span-3 md:col-span-1 bg-slate-800 p-2 md:p-4 rounded-lg md:rounded-xl border border-slate-700 shadow-sm flex flex-col relative group ${showFresnel ? 'cursor-help' : ''}`}>
+        <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+          <Target className={`w-3 h-3 md:w-4 md:h-4 ${showFresnel ? 'text-indigo-400' : 'text-slate-600'}`} />
+          <span className={`text-xs md:text-sm font-medium ${showFresnel ? 'text-slate-400' : 'text-slate-500'}`}>Fresnel (Mid)</span>
           <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2 bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded shadow-xl z-20 pointer-events-none text-center">
             {showFresnel 
               ? "Required line-of-sight clearance radius for the 1st Fresnel zone at the exact midpoint of the link."
               : "Fresnel zone clearance is generally not applicable for indoor non-line-of-sight scattering models."}
           </div>
         </div>
-        <div className={`text-2xl font-bold ${showFresnel ? 'text-slate-100' : 'text-slate-500'}`}>
+        <div className={`text-base md:text-2xl font-bold ${showFresnel ? 'text-slate-100' : 'text-slate-500'}`}>
           {showFresnel ? (
-            <>{results.fresnelClearance.toFixed(1)} <span className="text-sm font-normal text-slate-400">m</span></>
+            <>{results.fresnelClearance.toFixed(1)} <span className="text-xs md:text-sm font-normal text-slate-400">m</span></>
           ) : (
-            <span className="text-xl">N/A</span>
+            <span className="text-sm md:text-xl">N/A</span>
           )}
         </div>
       </div>

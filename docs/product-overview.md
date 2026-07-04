@@ -16,6 +16,10 @@ This project is a modernization of a legacy Java Swing desktop application, rewr
 * **Stackable Attenuations:** Stack additional real-world losses like Vegetation Depth and Rain Attenuation on top of your core models.
 * **Fresnel Zone Clearance Calculator:** Crucial for field engineering, the app actively calculates the exact line-of-sight clearance radius required for the 1st Fresnel Zone at the midpoint of your link. This acts as an independent sanity check to ensure your physical environment supports your mathematical line-of-sight assumptions.
 * **Real-time Calculations:** Instantly calculates Receive Signal Level (RSL) and Link Margin as you adjust parameters via interactive sliders. Both the RSL and Fade Margin KPIs dynamically color-code (green/red) to indicate connection success.
+* **Advanced Sensitivity Calculator:** Toggle between manual Rx Sensitivity input or calculate it dynamically based on Bandwidth, Noise Figure, and required SNR.
+* **Mobile-First Bottom Sheet:** Features a fluid, 4-state swipable bottom sheet overlay for parameter input on mobile devices, ensuring charts remain visible at all times.
+* **Smart KPI Indicators:** 3-state color coding (Green/Amber/Red) for Fade Margin and RSL to instantly gauge link reliability.
+* **Adjustable Chart Range:** Dynamically expand or shrink the sweep chart's X-axis distance.
 * **Interactive Data Visualization:** Dynamic charting of signal sweep over distance. You can instantly toggle between three critical views:
   * **RSL (dBm):** View the raw received signal strength mapped against your receiver's sensitivity threshold.
   * **Fade Margin (dB):** Visualize the exact buffer your link has before failure (0 dB).
