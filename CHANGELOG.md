@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2026-07-04
+### Changed
+- **Mobile UX Enhancements:** Upgraded the mobile bottom sheet to support fluid, finger-tracking swiping (4 states) with a native iOS/Android style pill handle.
+- **KPI Layout:** Reordered mobile KPI cards to prioritize RSL, Fade Margin, and Path Loss on the top row, perfectly fitting two compact rows.
+- **UI Tweaks:** Added a collapsible info toggle `(i)` for Propagation Model descriptions on mobile to save vertical space, and removed redundant headers.
+
+
 ## [1.0.0] - 2026-07-04
 ### Added
 - **Initial Release:** Complete rewrite of the legacy Java Swing app into a modern React/TypeScript/Vite single-page application.

@@ -1,11 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Download, BookOpen, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
+import { Download, BookOpen, Settings2 } from 'lucide-react';
 import { calculateFSPL, calculateHataUrban, calculateCost231Hata, calculateEgli, calculateEricsson, calculate3GPP38901, calculateITUR1238, calculateSUI, calculateRSL, calculateLinkMargin, calculateLogDistance, calculatePlaneEarth, calculateVegetationLoss, calculateRainAttenuation, calculateFresnelZone, calculateSensitivity } from './lib/rfMath';
 import { InputPanel, KPICards, ChartView, SystemDiagram, DocumentationModal } from './components';
 
 export default function App() {
   const [sheetState, setSheetState] = useState<'collapsed' | 'partial' | 'half' | 'expanded'>('partial');
   const [touchStartY, setTouchStartY] = useState(0);
+  const [dragOffset, setDragOffset] = useState<number | null>(null);
   const [showDocs, setShowDocs] = useState(false);
   
   // 1. Core State
@@ -148,11 +149,19 @@ export default function App() {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartY(e.touches[0].clientY);
+    setDragOffset(0);
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndY = e.changedTouches[0].clientY;
-    const deltaY = touchEndY - touchStartY;
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY === 0) return;
+    const currentY = e.touches[0].clientY;
+    setDragOffset(currentY - touchStartY);
+  };
+
+  const handleTouchEnd = () => {
+    const deltaY = dragOffset || 0;
+    setTouchStartY(0);
+    setDragOffset(null);
     
     if (deltaY > 40) {
       // Swiped down
@@ -165,6 +174,13 @@ export default function App() {
       else if (sheetState === 'partial') setSheetState('half');
       else if (sheetState === 'half') setSheetState('expanded');
     }
+  };
+
+  const getSheetBaseTransform = () => {
+    if (sheetState === 'expanded') return '0px';
+    if (sheetState === 'half') return 'calc(100% - 50dvh)';
+    if (sheetState === 'partial') return 'calc(100% - 25dvh)';
+    return 'calc(100% - 4rem)';
   };
 
   const getModelDisplayName = (model: string) => {
@@ -199,14 +215,16 @@ export default function App() {
       {/* Sidebar / Mobile Bottom Sheet for Inputs */}
       <aside 
         className={`
-          fixed inset-x-0 bottom-0 z-40 bg-slate-900 border-t border-slate-700 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] rounded-t-3xl transition-transform duration-300 ease-in-out flex flex-col
+          fixed inset-x-0 bottom-0 z-40 bg-slate-900 border-t border-slate-700 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] rounded-t-3xl flex flex-col
+          ${dragOffset === null ? 'transition-transform duration-300 ease-in-out' : ''}
           ${sheetState === 'expanded' ? 'translate-y-0 h-[70dvh]' : sheetState === 'half' ? 'translate-y-[calc(100%-50dvh)] h-[70dvh]' : sheetState === 'partial' ? 'translate-y-[calc(100%-25dvh)] h-[70dvh]' : 'translate-y-[calc(100%-4rem)] h-[70dvh]'}
           md:static md:translate-y-0 md:h-auto md:w-80 md:lg:w-96 md:border-t-0 md:border-r md:rounded-none md:shadow-none md:flex-none
         `}
+        style={dragOffset !== null ? { transform: `translateY(calc(${getSheetBaseTransform()} + ${dragOffset}px))` } : undefined}
       >
         {/* Mobile Drag Handle */}
         <div 
-          className="md:hidden flex items-center justify-between px-6 h-16 cursor-pointer select-none border-b border-slate-800 shrink-0"
+          className="md:hidden flex flex-col items-center justify-center pt-3 pb-3 cursor-pointer select-none border-b border-slate-800 shrink-0"
           onClick={() => {
             if (sheetState === 'collapsed') setSheetState('partial');
             else if (sheetState === 'partial') setSheetState('half');
@@ -214,13 +232,17 @@ export default function App() {
             else setSheetState('partial');
           }}
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="flex items-center gap-2">
-            <Settings2 className="w-5 h-5 text-blue-500" />
-            <span className="font-semibold text-slate-200">System Parameters</span>
+          {/* Google Maps style pill handle */}
+          <div className="w-10 h-1.5 bg-slate-600 rounded-full mb-3" />
+          <div className="flex items-center justify-between w-full px-6">
+            <div className="flex items-center gap-2">
+              <Settings2 className="w-5 h-5 text-blue-500" />
+              <span className="font-semibold text-slate-200">System Parameters</span>
+            </div>
           </div>
-          {sheetState === 'expanded' ? <ChevronDown className="w-5 h-5 text-slate-400" /> : <ChevronUp className="w-5 h-5 text-slate-400" />}
         </div>
         
         {/* Scrollable Input Area */}
