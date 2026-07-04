@@ -163,6 +163,15 @@ export default function App() {
     setTouchStartY(0);
     setDragOffset(null);
     
+    if (Math.abs(deltaY) < 10) {
+      // Tap detection
+      if (sheetState === 'collapsed') setSheetState('partial');
+      else if (sheetState === 'partial') setSheetState('half');
+      else if (sheetState === 'half') setSheetState('expanded');
+      else setSheetState('partial');
+      return;
+    }
+    
     if (deltaY > 40) {
       // Swiped down
       if (sheetState === 'expanded') setSheetState('half');
@@ -178,9 +187,9 @@ export default function App() {
 
   const getSheetBaseTransform = () => {
     if (sheetState === 'expanded') return '0px';
-    if (sheetState === 'half') return 'calc(100% - 50dvh)';
-    if (sheetState === 'partial') return 'calc(100% - 25dvh)';
-    return 'calc(100% - 4rem)';
+    if (sheetState === 'half') return '100% - 50dvh';
+    if (sheetState === 'partial') return '100% - 25dvh';
+    return '100% - 4rem';
   };
 
   const getModelDisplayName = (model: string) => {
@@ -224,13 +233,7 @@ export default function App() {
       >
         {/* Mobile Drag Handle */}
         <div 
-          className="md:hidden flex flex-col items-center justify-center pt-3 pb-3 cursor-pointer select-none border-b border-slate-800 shrink-0"
-          onClick={() => {
-            if (sheetState === 'collapsed') setSheetState('partial');
-            else if (sheetState === 'partial') setSheetState('half');
-            else if (sheetState === 'half') setSheetState('expanded');
-            else setSheetState('partial');
-          }}
+          className="md:hidden flex flex-col items-center justify-center pt-3 pb-3 cursor-pointer select-none border-b border-slate-800 shrink-0 touch-none"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
