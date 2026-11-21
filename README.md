@@ -3,7 +3,7 @@
 A modern, responsive, offline-capable single-file web application for calculating RF link budgets. This application replaces a legacy Java Swing app and provides a clean, mobile-friendly interface for RF engineers to analyze radio links.
 
 ## 🚀 Live Demo
-**[Link Budget-App](https://ofirbd.github.io/linkbudget-app/)**
+**[Link Budget-App](https://linkbudget.deltawize.com/)**
 
 ## ✨ Features
 
